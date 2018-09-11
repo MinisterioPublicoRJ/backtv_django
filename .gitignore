@@ -1,0 +1,6 @@
+*.py[co]
+settings.ini
+db.sqlite3
+
+venv/
+.idea/
