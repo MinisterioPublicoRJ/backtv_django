@@ -15,7 +15,7 @@ proxies = {
 
 
 class ClimaView(View):
-    def get(self, request, format=None):
+    def get(self, request, *args, **kwargs):
         resp_content = requests.get(URL, proxies=proxies).content.decode('UTF-8')
         metar_obj = Metar.Metar('METAR ' + resp_content.split('\n')[1])
         temperature = str(metar_obj.temp).split(' ')[0]
