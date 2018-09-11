@@ -1,0 +1,49 @@
+from operator import itemgetter
+
+import feedparser
+
+from django.http import JsonResponse
+from django.views.generic import View
+
+
+class NewsView(View):
+    def get(self, request, *args, **kwargs):
+        news = read_rss()
+        return JsonResponse(data=news, safe=False)
+
+
+def read_rss():
+    ebc = feedparser.parse(
+        'http://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'
+    )
+    valor_politico = feedparser.parse(
+        'https://www.valor.com.br/politica/rss'
+    )
+    valor_brasil = feedparser.parse(
+        'https://www.valor.com.br/brasil/rss'
+    )
+
+    news = []
+    news.extend(iter_entries(ebc, source='Empresa Brasil de Comunicação'))
+    news.extend(iter_entries(valor_politico,
+                             source='Valor Econômico - Política'))
+    news.extend(iter_entries(valor_brasil, source='Valor Econômico - Brasil'))
+
+    return sorted(news, key=itemgetter('published_parsed'), reverse=True)
+
+
+def iter_entries(entries, source):
+    news = []
+    for entry in entries['entries']:
+        news.append(
+                {
+                'source': source,
+                'title': entry['title'],
+                'summary': entry['summary'],
+                'href': entry['links'][0]['href'],
+                'published': entry['published'],
+                'published_parsed': entry['published_parsed']
+                }
+        )
+
+    return news
