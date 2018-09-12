@@ -2,14 +2,14 @@ from operator import itemgetter
 
 import feedparser
 
-from django.http import JsonResponse
-from django.views.generic import View
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
-class NewsView(View):
+class NewsView(APIView):
     def get(self, request, *args, **kwargs):
         news = read_rss()
-        return JsonResponse(data=news, safe=False)
+        return Response(data=news)
 
 
 def read_rss():
