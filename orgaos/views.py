@@ -176,3 +176,15 @@ class AcervoClasseView(APIView):
 
         return Response(data=results)
 
+
+def get_designacao(arr):
+    return [
+        (
+            a['MMPM_MATRICULA'],
+            a['MMPM_NOME'],
+            a['MMPM_FUNCAO'],
+            a['MMPM_DTINICIOSUBS'],
+            a['MMPM_DTFIMSUBS']
+        )
+        for a in arr
+    ]
