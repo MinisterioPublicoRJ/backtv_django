@@ -1,9 +1,9 @@
 from django.urls import path
 
-from orgaos.views import OrgaosView
+from orgaos.views import OrgaosListView
 
 
 app_name = 'orgaos'
 urlpatterns = [
-    path('orgaos/', OrgaosView.as_view(), name='api-list-orgaos'),
+    path('orgaos/', OrgaosListView.as_view(), name='api-list-orgaos'),
 ]

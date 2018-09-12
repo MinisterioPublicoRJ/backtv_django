@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from .model import run, list_orgaos_query
 
 
-class OrgaosView(APIView):
+class OrgaosListView(APIView):
     def get(self, request, *args, **kwargs):
         data = run(list_orgaos_query)
         results = []
