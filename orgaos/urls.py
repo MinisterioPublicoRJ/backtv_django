@@ -5,7 +5,8 @@ from orgaos.views import (
         VistasListView,
         AcervoView,
         DetalhesView,
-        AcervoClasseView
+        AcervoClasseView,
+        FinanceiroView
         )
 
 
@@ -16,4 +17,5 @@ urlpatterns = [
     path('orgaos/acervo/', AcervoView.as_view(), name='api-acervo'),
     path('orgaos/detalhes/', DetalhesView.as_view(), name='api-detalhes'),
     path('orgaos/acervo-classe/', AcervoClasseView.as_view(), name='api-acervo-classe'),
+    path('orgaos/financeiro/', FinanceiroView.as_view(), name='api-financeiro'),
 ]

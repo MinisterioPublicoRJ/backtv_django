@@ -1,3 +1,5 @@
+import pandas
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -177,6 +179,42 @@ class AcervoClasseView(APIView):
         return Response(data=results)
 
 
+class FinanceiroView(APIView):
+    def get(self, request, *args, **kwargs):
+        cdorg = int(request.GET.get('cdorg'))
+        consolidados = pandas.read_csv(
+                'orgaos/sheets/consolidacao.csv', sep=';',
+                converters={'Total': format_money,
+                            'Área do Layout': to_float}
+        )
+        orgaos = pandas.read_csv('orgaos/sheets/orgaos.csv', sep=';')
+        imoveis = pandas.read_csv('orgaos/sheets/imoveis.csv', sep=';')
+
+        nome_promotoria = (
+            orgaos[orgaos['Código do Órgão'] == cdorg]
+            ['Nome do Órgão'].values
+        )
+
+        if nome_promotoria.size == 0:
+            return {}
+
+        df_orgao = (
+            consolidados[consolidados['Centro de Custos'] == nome_promotoria[0]]
+        )
+        area_orgao = df_orgao['Área do Layout'].values[0]
+        custo = df_orgao['Total'].sum()
+        codigo_imovel = df_orgao['Código do Imóvel'].values[0]
+        natureza = (
+            imoveis[imoveis['CÓDIGO'] == codigo_imovel]['NATUREZA'].values[0]
+        )
+
+        return Response(data={
+                'custo_orgao': custo,
+                'area_orgao': area_orgao,
+                'natureza': natureza
+            })
+
+
 def get_designacao(arr):
     return [
         (
@@ -188,3 +226,18 @@ def get_designacao(arr):
         )
         for a in arr
     ]
+
+
+def to_float(val):
+    try:
+        return float(val.replace(',', '.'))
+    except ValueError:
+        return 0
+
+
+def format_money(val):
+    try:
+        val = val.replace('R$', '').replace('.', '').replace(',', '.')
+        return float(val)
+    except ValueError:
+        return 0
