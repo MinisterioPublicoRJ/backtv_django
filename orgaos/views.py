@@ -196,7 +196,7 @@ class FinanceiroView(APIView):
         )
 
         if nome_promotoria.size == 0:
-            return {}
+            return Response(data={})
 
         df_orgao = (
             consolidados[consolidados['Centro de Custos'] == nome_promotoria[0]]
@@ -213,6 +213,33 @@ class FinanceiroView(APIView):
                 'area_orgao': area_orgao,
                 'natureza': natureza
             })
+
+
+class FinanceiroAgrupadoView(APIView):
+    def get(self, request, *args, **kwargs):
+        cdorg = int(request.GET.get('cdorg'))
+        consolidados = pandas.read_csv(
+                    'orgaos/sheets/consolidacao.csv', sep=';',
+                    converters={'Total': format_money,
+                                'Área do Layout': to_float}
+        )
+        orgaos = pandas.read_csv('orgaos/sheets/orgaos.csv', sep=';')
+
+        if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'] \
+                .values.size == 0:
+            return Response(data={})
+
+        nome_promotoria = (
+            orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
+        )
+
+        df_orgao = (
+            consolidados[consolidados['Centro de Custos'] == nome_promotoria]
+        )
+
+        return Response(
+            data=df_orgao.groupby('Tipo de Custo').Total.sum().to_dict()
+        )
 
 
 def get_designacao(arr):

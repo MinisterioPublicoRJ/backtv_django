@@ -34,15 +34,22 @@ class Orgaos(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     @mock.patch('orgaos.views.run')
-    def test_detalhes(self, _run):
+    def test_acervo_classe(self, _run):
         url = reverse('orgaos:api-acervo-classe')
         resp = self.client.get(url)
 
         self.assertEqual(resp.status_code, 200)
 
     @mock.patch('orgaos.views.run')
-    def test_detalhes(self, _run):
+    def test_financeiro(self, _run):
         url = reverse('orgaos:api-financeiro')
+        resp = self.client.get(url)
+
+        self.assertEqual(resp.status_code, 200)
+
+    @mock.patch('orgaos.views.run')
+    def test_financeiro_agrupado(self, _run):
+        url = reverse('orgaos:api-financeiro-agrupado')
         resp = self.client.get(url)
 
         self.assertEqual(resp.status_code, 200)
