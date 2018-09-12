@@ -25,3 +25,17 @@ class Orgaos(TestCase):
         resp = self.client.get(url)
 
         self.assertEqual(resp.status_code, 200)
+
+    @mock.patch('orgaos.views.run')
+    def test_detalhes(self, _run):
+        url = reverse('orgaos:api-detalhes')
+        resp = self.client.get(url)
+
+        self.assertEqual(resp.status_code, 200)
+
+    @mock.patch('orgaos.views.run')
+    def test_detalhes(self, _run):
+        url = reverse('orgaos:api-acervo-classe')
+        resp = self.client.get(url)
+
+        self.assertEqual(resp.status_code, 200)

@@ -111,6 +111,78 @@ acervo_qtd_query = """
     group by DOCU_ORGI_ORGA_DK_RESPONSAVEL
 """
 
+foto_mat_query = """
+    SELECT foto, nome_arq FROM RH.RH_FUNC_IMG WHERE cdmatricula = :mat
+"""
+
+acervo_classe_pai_query = """
+    WITH docs AS (
+        SELECT
+            (
+                SELECT cls.cldc_dk cldc_dk_pai
+                FROM mcpr_classe_docto_mp cls
+                WHERE connect_by_isleaf = 1
+                    CONNECT BY PRIOR cls.cldc_cldc_dk_superior = cls.cldc_dk
+                    START WITH  d.docu_cldc_dk = cls.cldc_dk
+            ) AS cldc_dk_pai,
+            d.docu_dk
+        FROM mcpr_documento d
+        WHERE
+            d.docu_fsdc_dk = 1
+            AND DOCU_ORGI_ORGA_DK_RESPONSAVEL = :org
+    )
+    SELECT
+        cldc_dk_pai CLASSE_ID_PAI,
+        nvl(cldc_ds_classe, '* SEM CLASSE CADASTRADA *') CLASSE_PAI,
+        count(docu_dk) QTD
+    FROM docs
+    LEFT JOIN mcpr_classe_docto_mp ON cldc_dk = cldc_dk_pai
+    GROUP BY cldc_dk_pai, cldc_ds_classe
+    ORDER BY 3 DESC
+"""
+
+list_detalhes_query = """
+    select
+    MMPM_ORDEM,
+    MMPM_MAPA_CRAAI,
+    MMPM_MAPA_FORUM,
+    MMPM_MAPA_BAIRRO,
+    MMPM_MAPA_MUNICIPIO,
+    MMPM_CRAAI,
+    MMPM_COMARCA,
+    MMPM_FORO,
+    MMPM_GRUPO,
+    MMPM_ORGAO,
+    MMPM_TELEFONESORGAO,
+    MMPM_EXIBEGRUPO,
+    MMPM_EXIBEFORO,
+    MMPM_ORDEMGRUPO,
+    MMPM_ORDEMQUADRO,
+    MMPM_MATRICULA,
+    MMPM_NOME,
+    MMPM_CELULAR,
+    MMPM_CARGO,
+    MMPM_CONCURSO,
+    MMPM_ANOCONCURSO,
+    MMPM_ROMANO,
+    MMPM_FUNCAO,
+    MMPM_ORDEMSUBSTITUCAO,
+    MMPM_FLAG_PGJ,
+    MMPM_FLAG_ELEITORAL,
+    MMPM_FLAG_CRAAI,
+    MMPM_DIAS,
+    nvl(MMPM_AFASTAMENTO,'') as MMPM_AFASTAMENTO,
+    MMPM_PGJ_FUNCAO,
+    MMPM_DTNASC,
+    MMPM_DTINICIOSUBS,
+    MMPM_DTFIMSUBS,
+    MMPM_FLAG_ASSESSOR,
+    MMPM_CDORGAO
+    from MMPS.MMPS_ADM_RH_MOV_PROM
+    where mmpm_cdorgao = :org
+    order by MMPM_ORDEM, MMPM_ORDEMSUBSTITUCAO
+"""
+
 
 def run(query, params=None):
     connection = cx_Oracle.connect(

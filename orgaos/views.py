@@ -6,7 +6,9 @@ from .models import (
         list_orgaos_query,
         list_vistas_query,
         acervo_qtd_query,
-        list_acervo_query
+        list_acervo_query,
+        list_detalhes_query,
+        acervo_classe_pai_query
         )
 
 
@@ -81,3 +83,96 @@ class AcervoView(APIView):
             result['HISTORICO'] = historico
 
         return Response(data=result)
+
+
+class DetalhesView(APIView):
+    def get(self, request, *args, **kwargs):
+        cdorg = request.GET.get('cdorg')
+        data = list(run(list_detalhes_query, {'org': cdorg}))
+
+        colunas = """MMPM_ORDEM
+                    MMPM_MAPA_CRAAI
+                    MMPM_MAPA_FORUM
+                    MMPM_MAPA_BAIRRO
+                    MMPM_MAPA_MUNICIPIO
+                    MMPM_CRAAI
+                    MMPM_COMARCA
+                    MMPM_FORO
+                    MMPM_GRUPO
+                    MMPM_ORGAO
+                    MMPM_TELEFONESORGAO
+                    MMPM_EXIBEGRUPO
+                    MMPM_EXIBEFORO
+                    MMPM_ORDEMGRUPO
+                    MMPM_ORDEMQUADRO
+                    MMPM_MATRICULA
+                    MMPM_NOME
+                    MMPM_CELULAR
+                    MMPM_CARGO
+                    MMPM_CONCURSO
+                    MMPM_ANOCONCURSO
+                    MMPM_ROMANO
+                    MMPM_FUNCAO
+                    MMPM_ORDEMSUBSTITUCAO
+                    MMPM_FLAG_PGJ
+                    MMPM_FLAG_ELEITORAL
+                    MMPM_FLAG_CRAAI
+                    MMPM_DIAS
+                    MMPM_AFASTAMENTO
+                    MMPM_PGJ_FUNCAO
+                    MMPM_DTNASC
+                    MMPM_DTINICIOSUBS
+                    MMPM_DTFIMSUBS
+                    MMPM_FLAG_ASSESSOR
+                    MMPM_CDORGAO
+                    """.split("\n")
+
+        colunas = [c.strip() for c in colunas]
+        data = [dict(zip(colunas, d)) for d in data]
+
+        if not data:
+            return Response(data={})
+
+        retorno = {
+                "detalhes": {
+                    "MATRICULA": data[0]["MMPM_MATRICULA"],
+                    "NOME": data[0]["MMPM_NOME"],
+                    "CARGO": data[0]["MMPM_CARGO"],
+                    "CONCURSO": data[0]["MMPM_CONCURSO"],
+                    "ANOCONCURSO": data[0]["MMPM_ANOCONCURSO"],
+                    "ROMANO": data[0]["MMPM_ROMANO"],
+                    "FLAG_PGJ": data[0]["MMPM_FLAG_PGJ"],
+                    "FLAG_ELEITORAL": data[0]["MMPM_FLAG_ELEITORAL"],
+                    "FLAG_CRAAI": data[0]["MMPM_FLAG_CRAAI"],
+                    "DTNASC": data[0]["MMPM_DTNASC"],
+                    "FLAG_ASSESSOR": data[0]["MMPM_FLAG_ASSESSOR"],
+                    "CDORGAO": data[0]["MMPM_CDORGAO"],
+                    "TELEFONESORGAO": data[0]["MMPM_TELEFONESORGAO"].split(' | ')[1:],
+                    "ORGAO": data[0]["MMPM_ORGAO"],
+                    "CELULAR": data[0]["MMPM_CELULAR"],
+                    },
+                "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
+                "designacoes": get_designacao(data[1:]),
+                "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
+                    if data[0]["MMPM_AFASTAMENTO"] else [])
+
+        }
+        return Response(data=retorno)
+
+
+class AcervoClasseView(APIView):
+    def get(self, request, *args, **kwargs):
+        cdorg = request.GET.get('cdorg')
+        data = run(acervo_classe_pai_query, {'org': cdorg})
+        results = []
+        if cdorg is not None:
+            for row in data:
+                row_dict = {
+                    'CLASSE_ID_PAI': row[0],
+                    'CLASSE_PAI': row[1],
+                    'QTD': row[2]
+                }
+                results.append(row_dict)
+
+        return Response(data=results)
+
