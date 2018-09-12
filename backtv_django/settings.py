@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'clima',
     'news',
+    'orgaos',
 ]
 
 MIDDLEWARE = [
