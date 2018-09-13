@@ -1,5 +1,6 @@
 import pandas
 
+from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -240,6 +241,39 @@ class FinanceiroAgrupadoView(APIView):
         return Response(
             data=df_orgao.groupby('Tipo de Custo').Total.sum().to_dict()
         )
+
+
+class UploadOrgaoSheetsView(APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, format=None):
+        file_obj = request.FILES['file']
+        with open('orgaos/sheets/orgaos.csv', 'wb') as out_put:
+            out_put.write(file_obj.read())
+
+        return Response(status=204)
+
+
+class UploadImoveisSheetsView(APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, format=None):
+        file_obj = request.FILES['file']
+        with open('orgaos/sheets/imoveis.csv', 'wb') as out_put:
+            out_put.write(file_obj.read())
+
+        return Response(status=204)
+
+
+class UploadConsolidacaoSheetsView(APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, format=None):
+        file_obj = request.FILES['file']
+        with open('orgaos/sheets/consolidacao.csv', 'wb') as out_put:
+            out_put.write(file_obj.read())
+
+        return Response(status=204)
 
 
 def get_designacao(arr):
