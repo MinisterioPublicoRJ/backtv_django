@@ -1,8 +1,3 @@
-import cx_Oracle
-
-from decouple import config
-
-
 list_orgaos_query = """
     SELECT
         org.ORLW_ORGI_CDORGAO AS CDORG,
@@ -23,6 +18,7 @@ list_orgaos_query = """
         AND func.CDSITUACAOFUNC = 1
         AND func.CDCARGO = 74
 """
+
 
 list_vistas_query = """
     SELECT
@@ -64,6 +60,7 @@ list_vistas_query = """
         ORDER BY 1 DESC
     )
 """
+
 
 list_acervo_query = """
     WITH ENTRADAS AS(
@@ -111,9 +108,6 @@ acervo_qtd_query = """
     group by DOCU_ORGI_ORGA_DK_RESPONSAVEL
 """
 
-foto_mat_query = """
-    SELECT foto, nome_arq FROM RH.RH_FUNC_IMG WHERE cdmatricula = :mat
-"""
 
 acervo_classe_pai_query = """
     WITH docs AS (
@@ -184,28 +178,3 @@ list_detalhes_query = """
 """
 
 
-DS_EXADATA_HOST = config('DB_HOST')
-DS_EXADATA_PORT = config('DB_PORT')
-DS_EXADATA_SN = config('DB_SN')
-DS_EXADATA_user = config('DB_USER')
-DS_EXADATA_password = config('DB_PASSWORD')
-
-DS_EXADATA_CONN_SID = cx_Oracle.makedsn(
-    DS_EXADATA_HOST,
-    DS_EXADATA_PORT,
-    service_name=DS_EXADATA_SN)
-
-
-def run(query, params=None):
-    connection = cx_Oracle.connect(
-            user=DS_EXADATA_user,
-            password=DS_EXADATA_password,
-            dsn=DS_EXADATA_CONN_SID,
-            encoding="UTF-8",
-            nencoding="UTF-8"
-    )
-
-    cursor = connection.cursor()
-    if params is None:
-        return cursor.execute(query)
-    return cursor.execute(query, params)
