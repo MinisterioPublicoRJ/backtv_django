@@ -7,7 +7,10 @@ from orgaos.views import (
         DetalhesView,
         AcervoClasseView,
         FinanceiroView,
-        FinanceiroAgrupadoView
+        FinanceiroAgrupadoView,
+        UploadOrgaoSheetsView,
+        UploadImoveisSheetsView,
+        UploadConsolidadoSheetsView
         )
 
 
@@ -17,10 +20,21 @@ urlpatterns = [
     path('orgaos/vistas/', VistasListView.as_view(), name='api-list-vistas'),
     path('orgaos/acervo/', AcervoView.as_view(), name='api-acervo'),
     path('orgaos/detalhes/', DetalhesView.as_view(), name='api-detalhes'),
-    path('orgaos/acervo-classe/', AcervoClasseView.as_view(), name='api-acervo-classe'),
-    path('orgaos/financeiro/', FinanceiroView.as_view(), name='api-financeiro'),
+    path('orgaos/acervo-classe/',
+         AcervoClasseView.as_view(),
+         name='api-acervo-classe'),
+    path('orgaos/financeiro/',
+         FinanceiroView.as_view(),
+         name='api-financeiro'),
     path(
         'orgaos/financeiro/agrupado/',
         FinanceiroAgrupadoView.as_view(), name='api-financeiro-agrupado'
     ),
+    path('orgaos/upload/orgaos',
+         UploadOrgaoSheetsView.as_view(), name='upload-sheets-orgaos'),
+    path('orgaos/upload/imoveis',
+         UploadImoveisSheetsView.as_view(), name='upload-sheets-imoveis'),
+    path('orgaos/upload/consolidado',
+         UploadConsolidadoSheetsView.as_view(),
+         name='upload-sheets-consolidado'),
 ]
