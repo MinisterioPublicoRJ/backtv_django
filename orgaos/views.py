@@ -279,13 +279,13 @@ class UploadConsolidacaoSheetsView(APIView):
 
 def get_designacao(arr):
     return [
-        (
-            a['mmpm_matricula'],
-            a['mmpm_nome'],
-            a['mmpm_funcao'],
-            a['mmpm_dtiniciosubs'],
-            a['mmpm_dtfimsubs']
-        )
+        {
+            'mmpm_matricula': a['mmpm_matricula'],
+            'mmpm_nome': a['mmpm_nome'],
+            'mmpm_funcao': a['mmpm_funcao'],
+            'mmpm_dtiniciosubs': a['mmpm_dtiniciosubs'],
+            'mmpm_dtfimsubs': a['mmpm_dtfimsubs']
+        }
         for a in arr
     ]
 
