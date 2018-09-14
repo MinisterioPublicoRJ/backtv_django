@@ -21,12 +21,12 @@ class OrgaosListView(APIView):
         results = []
         for row in data:
             row_dict = {
-                'CDORG': row[0],
-                'CRAAI': row[1],
-                'COMARCA': row[2],
-                'FORO': row[3],
-                'ORGAO': row[4],
-                'TITULAR': row[5],
+                'cdorg': row[0],
+                'craai': row[1],
+                'comarca': row[2],
+                'foro': row[3],
+                'orgao': row[4],
+                'titular': row[5],
             }
             results.append(row_dict)
 
@@ -42,11 +42,11 @@ class VistasListView(APIView):
             results = []
             for row in data:
                 row_dict = {
-                    'TOTAL': row[0],
-                    'HOJE': row[1],
-                    'ATE_30': row[2],
-                    'DE_30_A_40': row[3],
-                    'MAIS_40': row[4],
+                    'total': row[0],
+                    'hoje': row[1],
+                    'ate_30': row[2],
+                    'de_30_a_40': row[3],
+                    'mais_40': row[4],
                 }
                 results.append(row_dict)
 
@@ -55,11 +55,11 @@ class VistasListView(APIView):
 
 class AcervoView(APIView):
     def get(self, request, *args, **kwargs):
-        result = {"ACERVO_ATUAL": [], 'HISTORICO': []}
+        result = {"acervo_atual": [], 'historico': []}
         cdorg = request.GET.get('cdorg')
         if cdorg:
             acervo = DAO.run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
-            result['ACERVO_ATUAL'] = acervo
+            result['acervo_atual'] = acervo
             meses = DAO.run(list_acervo_query, {'org': cdorg}).fetchall()
 
             historico = []
@@ -72,18 +72,18 @@ class AcervoView(APIView):
                 acervo_inicio_mes = acervo_fim_mes - saldo  # Olhando para trás
 
                 mes_dict = {
-                    'MES': mes[0],
-                    'ENTRADAS': entradas,
-                    'SAIDAS': saidas,
-                    'ACERVO_FIM_MES': acervo_fim_mes,
-                    'SALDO': saldo,
-                    'ACERVO_INICIO_MES': acervo_inicio_mes
+                    'mes': mes[0],
+                    'entradas': entradas,
+                    'saidas': saidas,
+                    'acervo_fim_mes': acervo_fim_mes,
+                    'saldo': saldo,
+                    'acervo_inicio_mes': acervo_inicio_mes
                 }
 
                 historico.append(mes_dict)
                 prev_acervo = acervo_inicio_mes
 
-            result['HISTORICO'] = historico
+            result['historico'] = historico
 
         return Response(data=result)
 
@@ -93,41 +93,41 @@ class DetalhesView(APIView):
         cdorg = request.GET.get('cdorg')
         data = list(DAO.run(list_detalhes_query, {'org': cdorg}))
 
-        colunas = """MMPM_ORDEM
-                    MMPM_MAPA_CRAAI
-                    MMPM_MAPA_FORUM
-                    MMPM_MAPA_BAIRRO
-                    MMPM_MAPA_MUNICIPIO
-                    MMPM_CRAAI
-                    MMPM_COMARCA
-                    MMPM_FORO
-                    MMPM_GRUPO
-                    MMPM_ORGAO
-                    MMPM_TELEFONESORGAO
-                    MMPM_EXIBEGRUPO
-                    MMPM_EXIBEFORO
-                    MMPM_ORDEMGRUPO
-                    MMPM_ORDEMQUADRO
-                    MMPM_MATRICULA
-                    MMPM_NOME
-                    MMPM_CELULAR
-                    MMPM_CARGO
-                    MMPM_CONCURSO
-                    MMPM_ANOCONCURSO
-                    MMPM_ROMANO
-                    MMPM_FUNCAO
-                    MMPM_ORDEMSUBSTITUCAO
-                    MMPM_FLAG_PGJ
-                    MMPM_FLAG_ELEITORAL
-                    MMPM_FLAG_CRAAI
-                    MMPM_DIAS
-                    MMPM_AFASTAMENTO
-                    MMPM_PGJ_FUNCAO
-                    MMPM_DTNASC
-                    MMPM_DTINICIOSUBS
-                    MMPM_DTFIMSUBS
-                    MMPM_FLAG_ASSESSOR
-                    MMPM_CDORGAO
+        colunas = """mmpm_ordem
+                    mmpm_mapa_craai
+                    mmpm_mapa_forum
+                    mmpm_mapa_bairro
+                    mmpm_mapa_municipio
+                    mmpm_craai
+                    mmpm_comarca
+                    mmpm_foro
+                    mmpm_grupo
+                    mmpm_orgao
+                    mmpm_telefonesorgao
+                    mmpm_exibegrupo
+                    mmpm_exibeforo
+                    mmpm_ordemgrupo
+                    mmpm_ordemquadro
+                    mmpm_matricula
+                    mmpm_nome
+                    mmpm_celular
+                    mmpm_cargo
+                    mmpm_concurso
+                    mmpm_anoconcurso
+                    mmpm_romano
+                    mmpm_funcao
+                    mmpm_ordemsubstitucao
+                    mmpm_flag_pgj
+                    mmpm_flag_eleitoral
+                    mmpm_flag_craai
+                    mmpm_dias
+                    mmpm_afastamento
+                    mmpm_pgj_funcao
+                    mmpm_dtnasc
+                    mmpm_dtiniciosubs
+                    mmpm_dtfimsubs
+                    mmpm_flag_assessor
+                    mmpm_cdorgao
                     """.split("\n")
 
         colunas = [c.strip() for c in colunas]
@@ -138,26 +138,26 @@ class DetalhesView(APIView):
 
         retorno = {
                 "detalhes": {
-                    "MATRICULA": data[0]["MMPM_MATRICULA"],
-                    "NOME": data[0]["MMPM_NOME"],
-                    "CARGO": data[0]["MMPM_CARGO"],
-                    "CONCURSO": data[0]["MMPM_CONCURSO"],
-                    "ANOCONCURSO": data[0]["MMPM_ANOCONCURSO"],
-                    "ROMANO": data[0]["MMPM_ROMANO"],
-                    "FLAG_PGJ": data[0]["MMPM_FLAG_PGJ"],
-                    "FLAG_ELEITORAL": data[0]["MMPM_FLAG_ELEITORAL"],
-                    "FLAG_CRAAI": data[0]["MMPM_FLAG_CRAAI"],
-                    "DTNASC": data[0]["MMPM_DTNASC"],
-                    "FLAG_ASSESSOR": data[0]["MMPM_FLAG_ASSESSOR"],
-                    "CDORGAO": data[0]["MMPM_CDORGAO"],
-                    "TELEFONESORGAO": data[0]["MMPM_TELEFONESORGAO"].split(' | ')[1:],
-                    "ORGAO": data[0]["MMPM_ORGAO"],
-                    "CELULAR": data[0]["MMPM_CELULAR"],
+                    "matricula": data[0]["mmpm_matricula"],
+                    "nome": data[0]["mmpm_nome"],
+                    "cargo": data[0]["mmpm_cargo"],
+                    "concurso": data[0]["mmpm_concurso"],
+                    "anoconcurso": data[0]["mmpm_anoconcurso"],
+                    "romano": data[0]["mmpm_romano"],
+                    "flag_pgj": data[0]["mmpm_flag_pgj"],
+                    "flag_eleitoral": data[0]["mmpm_flag_eleitoral"],
+                    "flag_craai": data[0]["mmpm_flag_craai"],
+                    "dtnasc": data[0]["mmpm_dtnasc"],
+                    "flag_assessor": data[0]["mmpm_flag_assessor"],
+                    "cdorgao": data[0]["mmpm_cdorgao"],
+                    "telefonesorgao": data[0]["mmpm_telefonesorgao"].split(' | ')[1:],
+                    "orgao": data[0]["mmpm_orgao"],
+                    "celular": data[0]["mmpm_celular"],
                     },
-                "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
+                "funcoes": data[0]["mmpm_pgj_funcao"].split('@'),
                 "designacoes": get_designacao(data[1:]),
-                "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
-                    if data[0]["MMPM_AFASTAMENTO"] else [])
+                "afastamento": (data[0]["mmpm_afastamento"].split('@')
+                    if data[0]["mmpm_afastamento"] else [])
 
         }
         return Response(data=retorno)
@@ -171,9 +171,9 @@ class AcervoClasseView(APIView):
         if cdorg is not None:
             for row in data:
                 row_dict = {
-                    'CLASSE_ID_PAI': row[0],
-                    'CLASSE_PAI': row[1],
-                    'QTD': row[2]
+                    'classe_id_pai': row[0],
+                    'classe_pai': row[1],
+                    'qtd': row[2]
                 }
                 results.append(row_dict)
 
@@ -237,6 +237,7 @@ class FinanceiroAgrupadoView(APIView):
         df_orgao = (
             consolidados[consolidados['Centro de Custos'] == nome_promotoria]
         )
+        df_orgao['Tipo de Custo'] = df_orgao['Tipo de Custo'].str.lower()
 
         return Response(
             data=df_orgao.groupby('Tipo de Custo').Total.sum().to_dict()
@@ -279,11 +280,11 @@ class UploadConsolidacaoSheetsView(APIView):
 def get_designacao(arr):
     return [
         (
-            a['MMPM_MATRICULA'],
-            a['MMPM_NOME'],
-            a['MMPM_FUNCAO'],
-            a['MMPM_DTINICIOSUBS'],
-            a['MMPM_DTFIMSUBS']
+            a['mmpm_matricula'],
+            a['mmpm_nome'],
+            a['mmpm_funcao'],
+            a['mmpm_dtiniciosubs'],
+            a['mmpm_dtfimsubs']
         )
         for a in arr
     ]
