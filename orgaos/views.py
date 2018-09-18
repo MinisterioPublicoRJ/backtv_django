@@ -4,8 +4,8 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from backtv_django import DAO
 from .models import (
-        run,
         list_orgaos_query,
         list_vistas_query,
         acervo_qtd_query,
@@ -17,7 +17,7 @@ from .models import (
 
 class OrgaosListView(APIView):
     def get(self, request, *args, **kwargs):
-        data = run(list_orgaos_query)
+        data = DAO.run(list_orgaos_query)
         results = []
         for row in data:
             row_dict = {
@@ -38,7 +38,7 @@ class VistasListView(APIView):
         cdorg = request.GET.get('cdorg')
         results = []
         if cdorg is not None:
-            data = run(list_vistas_query, {'org': cdorg})
+            data = DAO.run(list_vistas_query, {'org': cdorg})
             results = []
             for row in data:
                 row_dict = {
@@ -58,9 +58,9 @@ class AcervoView(APIView):
         result = {"ACERVO_ATUAL": [], 'HISTORICO': []}
         cdorg = request.GET.get('cdorg')
         if cdorg:
-            acervo = run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
+            acervo = DAO.run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
             result['ACERVO_ATUAL'] = acervo
-            meses = run(list_acervo_query, {'org': cdorg}).fetchall()
+            meses = DAO.run(list_acervo_query, {'org': cdorg}).fetchall()
 
             historico = []
             prev_acervo = acervo
@@ -91,7 +91,7 @@ class AcervoView(APIView):
 class DetalhesView(APIView):
     def get(self, request, *args, **kwargs):
         cdorg = request.GET.get('cdorg')
-        data = list(run(list_detalhes_query, {'org': cdorg}))
+        data = list(DAO.run(list_detalhes_query, {'org': cdorg}))
 
         colunas = """MMPM_ORDEM
                     MMPM_MAPA_CRAAI
@@ -166,7 +166,7 @@ class DetalhesView(APIView):
 class AcervoClasseView(APIView):
     def get(self, request, *args, **kwargs):
         cdorg = request.GET.get('cdorg')
-        data = run(acervo_classe_pai_query, {'org': cdorg})
+        data = DAO.run(acervo_classe_pai_query, {'org': cdorg})
         results = []
         if cdorg is not None:
             for row in data:
