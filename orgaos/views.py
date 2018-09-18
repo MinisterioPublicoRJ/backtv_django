@@ -154,8 +154,8 @@ class DetalhesView(APIView):
                     "ORGAO": data[0]["MMPM_ORGAO"],
                     "CELULAR": data[0]["MMPM_CELULAR"],
                     },
-                "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
-                "designacoes": get_designacao(data[1:]),
+                "designacoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
+                "auxilios": get_designacao(data[1:]),
                 "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
                     if data[0]["MMPM_AFASTAMENTO"] else [])
 
