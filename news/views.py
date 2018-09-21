@@ -1,3 +1,5 @@
+import re
+
 from operator import itemgetter
 
 import feedparser
@@ -35,15 +37,21 @@ def read_rss():
 def iter_entries(entries, source):
     news = []
     for entry in entries['entries']:
-        news.append(
-                {
-                'source': source,
-                'title': entry['title'],
-                'summary': entry['summary'],
-                'href': entry['links'][0]['href'],
-                'published': entry['published'],
-                'published_parsed': entry['published_parsed']
-                }
-        )
+        if not entry['title'] == 'Curtas':
+            news.append(
+                    {
+                    'source': source,
+                    'title': entry['title'],
+                    'summary': remove_tags_html(entry['summary']),
+                    'href': entry['links'][0]['href'],
+                    'published': entry['published'],
+                    'published_parsed': entry['published_parsed']
+                    }
+            )
 
     return news
+
+
+def remove_tags_html(summary):
+    pat = re.compile(r'(<.*?>|\n)')
+    return pat.sub('', summary)
