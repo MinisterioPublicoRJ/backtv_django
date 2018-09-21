@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from news.fixtures import ebc_fixture, valor_politico_fixtures, valor_brasil_fixture
+from news.views import remove_tags_html
 
 
 class News(TestCase):
@@ -58,3 +59,11 @@ class News(TestCase):
              'published_parsed': 1
              }
         )
+
+    def test_remove_html_tags(self):
+        summary = '<p>Noticia qualquer.</p><image>Sobre alguma coisa</image>'
+
+        summary_prep = remove_tags_html(summary)
+        expected = 'Noticia qualquer.Sobre alguma coisa'
+
+        self.assertEqual(summary_prep, expected)

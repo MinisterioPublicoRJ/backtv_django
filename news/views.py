@@ -1,3 +1,5 @@
+import re
+
 from operator import itemgetter
 
 import feedparser
@@ -39,7 +41,7 @@ def iter_entries(entries, source):
                 {
                 'source': source,
                 'title': entry['title'],
-                'summary': entry['summary'],
+                'summary': remove_tags_html(entry['summary']),
                 'href': entry['links'][0]['href'],
                 'published': entry['published'],
                 'published_parsed': entry['published_parsed']
@@ -47,3 +49,8 @@ def iter_entries(entries, source):
         )
 
     return news
+
+
+def remove_tags_html(summary):
+    pat = re.compile(r'<.*?>')
+    return pat.sub('', summary)
