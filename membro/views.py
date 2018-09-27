@@ -10,13 +10,13 @@ from .models import foto_mat_query
 class MembroFotoView(APIView):
     def get(self, request, *args, **kwargs):
         cdmat = request.GET.get('cdmat')
-        results = []
+        results = {}
         if cdmat is not None:
-            data = DAO.run(foto_mat_query, {'mat': cdmat})
-            for row in data:
-                row_dict = {
-                    'foto': base64.b64encode(row[0].read()).decode()
-                }
-                results.append(row_dict)
+            try:
+                data = DAO.run(foto_mat_query, {'mat': cdmat})
+                row = next(data)
+                results['foto'] = base64.b64encode(row[0].read()).decode()
+            except:
+                results['erro'] = 'Não foi encontrada uma foto para esta matrícula'
 
         return Response(data=results)
