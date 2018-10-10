@@ -38,17 +38,19 @@ def iter_entries(entries, source):
     news = []
     for entry in entries['entries']:
         if not entry['title'] == 'Curtas':
-            news.append(
-                {
-                    'source': source,
-                    'title': entry['title'],
-                    'image': get_imgsrc_from_html(entry['summary']),
-                    'summary': remove_tags_html(entry['summary']),
-                    'href': entry['links'][0]['href'],
-                    'published': entry['published'],
-                    'published_parsed': entry['published_parsed']
-                }
-            )
+            summary = remove_tags_html(entry['summary'])
+            if summary and not summary.isspace():
+                news.append(
+                    {
+                        'source': source,
+                        'title': entry['title'],
+                        'image': get_imgsrc_from_html(entry['summary']),
+                        'summary': summary,
+                        'href': entry['links'][0]['href'],
+                        'published': entry['published'],
+                        'published_parsed': entry['published_parsed']
+                    }
+                )
 
     return news
 
