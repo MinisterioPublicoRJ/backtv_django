@@ -38,16 +38,19 @@ def iter_entries(entries, source):
     news = []
     for entry in entries['entries']:
         if not entry['title'] == 'Curtas':
-            news.append(
+            summary = remove_tags_html(entry.get('summary',''))
+            if summary and not summary.isspace():
+                news.append(
                     {
-                    'source': source,
-                    'title': entry['title'],
-                    'summary': remove_tags_html(entry.get('summary', '')),
-                    'href': entry['links'][0]['href'],
-                    'published': entry['published'],
-                    'published_parsed': entry['published_parsed']
+                        'source': source,
+                        'title': entry['title'],
+                        'image': get_imgsrc_from_html(entry['summary']),
+                        'summary': summary,
+                        'href': entry['links'][0]['href'],
+                        'published': entry['published'],
+                        'published_parsed': entry['published_parsed']
                     }
-            )
+                )
 
     return news
 
@@ -55,3 +58,18 @@ def iter_entries(entries, source):
 def remove_tags_html(summary):
     pat = re.compile(r'(<.*?>|\n)')
     return pat.sub('', summary)
+
+
+def get_imgsrc_from_html(summary):
+    match_img_tag = re.search(
+        '(?<=<img)(.*?)(?<=src=)"(.*?)"',
+        summary,
+        re.IGNORECASE
+    )
+    if match_img_tag:
+        match = re.search('(?<=src=)"(.*?)"', summary, re.IGNORECASE)
+
+        if match:
+            return match.group(0).replace('"', '')
+
+    return ''
