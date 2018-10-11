@@ -42,7 +42,7 @@ def iter_entries(entries, source):
                     {
                     'source': source,
                     'title': entry['title'],
-                    'summary': remove_tags_html(entry['summary']),
+                    'summary': remove_tags_html(entry.get('summary', '')),
                     'href': entry['links'][0]['href'],
                     'published': entry['published'],
                     'published_parsed': entry['published_parsed']
